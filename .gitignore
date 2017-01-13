@@ -1,0 +1,6 @@
+*.csproj
+*.sln
+*.suo
+/prj/Library
+/prj/Temp
+/prj/prj.VC.db
