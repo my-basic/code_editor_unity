@@ -17,8 +17,7 @@ public class Example : MonoBehaviour
 
         my_basic.mb_set_error_handler(bas, on_error);
 
-        my_basic.mb_register_func(bas, "BAR", bar);
-        my_basic.mb_register_func(bas, "FOO", foo);
+        my_basic.mb_register_func(bas, "OUTPUT", output);
 
         StartCoroutine(test());
     }
@@ -51,7 +50,7 @@ public class Example : MonoBehaviour
         }
     }
 
-    private int bar(IntPtr s, ref IntPtr l)
+    private int output(IntPtr s, ref IntPtr l)
     {
         my_basic.mb_value_t val;
 
@@ -70,7 +69,7 @@ public class Example : MonoBehaviour
                 print(val.value.float_point);
                 break;
             case my_basic.mb_data_e.MB_DT_STRING:
-                print(val.value.str);
+                print(val.value.String);
                 break;
             default:
                 break;
@@ -79,40 +78,14 @@ public class Example : MonoBehaviour
         return my_basic.MB_FUNC_OK;
     }
 
-    private int foo(IntPtr s, ref IntPtr l)
-    {
-        int x;
-        int y;
-
-        my_basic.mb_attempt_open_bracket(s, ref l);
-
-        my_basic.mb_pop_int(s, ref l, out x);
-        my_basic.mb_pop_int(s, ref l, out y);
-
-        my_basic.mb_attempt_close_bracket(s, ref l);
-
-        my_basic.mb_push_real(s, ref l, (float)x / y);
-
-        print((float)x / y);
-
-        return my_basic.MB_FUNC_OK;
-    }
-
     private IEnumerator test()
     {
         yield return new WaitForEndOfFrame();
 
-        editor.Append("print class if tHEn mod tostring +");
-        editor.Append("'print class if tHEn mod tostring +");
-        editor.Append("print class 'if tHEn mod tostring +");
-        editor.Append("rem print class if tHEn mod tostring +");
-        editor.Append("print class rem if tHEn mod tostring +");
-        for (int i = 0; i < 50; i++)
-        {
-            editor.Append("print \"hello world\";");
-            editor.Append("print 22/7;");
-        }
-        editor.Append("print 22/7;print 22/7;print 22/7;print 22/7;print 22/7;print 22/7;print 22/7;print 22/7;print 22/7;print 22/7;");
+        editor.Append("a = 22");
+        editor.Append("b = 7");
+        editor.Append("output(a / b)");
+        editor.Append("output(\"hello\")");
 
         editor.Relayout();
     }
@@ -136,13 +109,7 @@ public class Example : MonoBehaviour
         print(code);
 
         my_basic.mb_reset(out bas);
-        my_basic.mb_load_string(bas, "foo(22, 7)");
-        my_basic.mb_load_string(bas, "foo(355, 113)");
-        //my_basic.mb_load_string(bas, "bar(3.24)");
+        my_basic.mb_load_string(bas, code);
         my_basic.mb_run(bas);
-
-        print(sizeof(my_basic.mb_data_e));
-        print(System.Runtime.InteropServices.Marshal.SizeOf(typeof(my_basic.mb_value_t)));
-        print(System.Runtime.InteropServices.Marshal.SizeOf(typeof(my_basic.mb_value_u)));
     }
 }

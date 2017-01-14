@@ -202,7 +202,7 @@ namespace lib
             [FieldOffset(0)]
             public real_t float_point;
             [FieldOffset(0)]
-            public string str;
+            public IntPtr str;
             [FieldOffset(0)]
             public mb_data_e type;
             [FieldOffset(0)]
@@ -225,6 +225,8 @@ namespace lib
             public IntPtr routine;
             [FieldOffset(0)]
             public mb_val_bytes_t bytes;
+
+            public string String { get { return Marshal.PtrToStringAnsi(str); } }
         }
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
