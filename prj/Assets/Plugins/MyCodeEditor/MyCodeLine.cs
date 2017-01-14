@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,14 +7,12 @@ using UnityEngine.UI;
 public class MyCodeLine : MonoBehaviour
 {
     private const float TEXT_OCCUPATION = 0.8f;
-    private const float Y_OFFSET = 2.0f;
+
+    public const float X_OFFSET = 2.0f;
+    public const float Y_OFFSET = 2.0f;
 
     public Button buttonCode = null;
     public Text textCode = null;
-
-    public InputField fieldInput = null;
-    public Text textInput = null;
-    public Text textInputPlaceholder = null;
 
     private int lineNumber = 0;
     public int LineNumber
@@ -26,7 +25,7 @@ public class MyCodeLine : MonoBehaviour
         {
             lineNumber = value;
 
-            this.Rect().SetLeftTopPosition(new Vector2(0.0f, -Y_OFFSET - Height * lineNumber));
+            this.Rect().SetLeftTopPosition(new Vector2(X_OFFSET, -Y_OFFSET - Height * lineNumber));
         }
     }
 
@@ -45,12 +44,9 @@ public class MyCodeLine : MonoBehaviour
 
             int fontSize = (int)(height * TEXT_OCCUPATION);
             textCode.fontSize = fontSize;
-            textInput.fontSize = fontSize;
-            textInputPlaceholder.fontSize = fontSize;
 
             this.Rect().SetHeight(height);
             buttonCode.Rect().SetHeight(height);
-            fieldInput.Rect().SetHeight(height);
         }
     }
 
@@ -95,10 +91,11 @@ public class MyCodeLine : MonoBehaviour
         }
     }
 
+    public Action<MyCodeLine> LineClicked = null;
+
     private void Start()
     {
         buttonCode.gameObject.SetActive(true);
-        fieldInput.gameObject.SetActive(false);
     }
 
     private void Awake()
@@ -116,18 +113,18 @@ public class MyCodeLine : MonoBehaviour
         Text = text;
 
         textCode.text = rich;
-        textInput.text = rich;
-        textInputPlaceholder.text = text;
 
         return this;
     }
 
     public void Relayout()
     {
-        this.Rect().SetLeftTopPosition(new Vector2(0.0f, -Y_OFFSET - Height * LineNumber));
+        this.Rect().SetLeftTopPosition(new Vector2(X_OFFSET, -Y_OFFSET - Height * LineNumber));
     }
 
     private void OnButtonCodeClicked()
     {
+        if (LineClicked != null)
+            LineClicked(this);
     }
 }

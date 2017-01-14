@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MyCodeEditor : MonoBehaviour
 {
@@ -26,15 +27,29 @@ public class MyCodeEditor : MonoBehaviour
 
     public GameObject prefabLine = null;
 
+    public ScrollRect scrollHeadCol = null;
+
+    public ScrollRect scrollLineCol = null;
+
+    public RectTransform transHeadRoot = null;
+
     public RectTransform transLineRoot = null;
+
+    public MyCodeInput codeInput = null;
 
     public int lineCountPerScreen = 18;
 
+    public Material fontMaterial = null;
+
     private List<Coloring> colorings = new List<Coloring>();
+
+    private List<MyCodeHead> heads = new List<MyCodeHead>();
 
     private List<MyCodeLine> lines = new List<MyCodeLine>();
 
-    private float textWidth = 0.0f;
+    private float headNumberWidth = 0.0f;
+
+    private float lineTextWidth = 0.0f;
 
     public string Text
     {
@@ -64,16 +79,26 @@ public class MyCodeEditor : MonoBehaviour
         get { return lines.Count; }
     }
 
-    public int[] Selected
+    public IEnumerable<int> Selected
     {
         get
         {
-            return null;
+            List<int> lst = new List<int>();
+            for (int i = 0; i < LineCount; ++i)
+            {
+                MyCodeHead h = heads[i];
+                if (h.toggleSelection.isOn)
+                    lst.Add(i);
+            }
+
+            return lst;
         }
     }
 
     private void Start()
     {
+        fontMaterial.mainTexture.filterMode = FilterMode.Point;
+
         colorings.Clear();
         Coloring[] cs = new Coloring[] { keyword, reserved, symbol, opcode, function };
         foreach (Coloring coloring in cs)
@@ -87,29 +112,10 @@ public class MyCodeEditor : MonoBehaviour
             }
         }
         colorings.Sort((x, y) => y.texts.Length - x.texts.Length);
-
-        textWidth = transLineRoot.GetSize().x;
     }
 
-    private void Relayout(MyCodeLine ln)
+    private void OnDestroy()
     {
-        if (ln.TightWidth > textWidth)
-        {
-            textWidth = ln.TightWidth;
-        }
-
-        float h = 0.0f;
-        foreach (MyCodeLine l in lines)
-        {
-            h += l.Rect().GetSize().y;
-        }
-        transLineRoot.SetSize(new Vector2(textWidth, h));
-
-        foreach (MyCodeLine l in lines)
-        {
-            l.Width = textWidth;
-            l.Relayout();
-        }
     }
 
     private string Color(string str)
@@ -189,6 +195,83 @@ public class MyCodeEditor : MonoBehaviour
         return str;
     }
 
+    private void EnsureLastLineEditable()
+    {
+        if (LineCount == 0 || !string.IsNullOrEmpty(lines.Last().Text))
+        {
+            Append(string.Empty);
+        }
+    }
+
+    private IEnumerator RelayoutProc(bool reserveScrollValue)
+    {
+        yield return new WaitForEndOfFrame();
+
+        float height = MyCodeLine.Y_OFFSET * 2.0f;
+
+        // Heads.
+        headNumberWidth = 0.0f;
+        foreach (MyCodeHead h in heads)
+        {
+            height += h.Rect().GetSize().y;
+            if (h.TightWidth > headNumberWidth)
+                headNumberWidth = h.TightWidth;
+        }
+        scrollHeadCol.Rect().offsetMin = new Vector2(0.0f, scrollHeadCol.Rect().offsetMin.y);
+        scrollHeadCol.Rect().SetSize(new Vector2(headNumberWidth + MyCodeHead.X_OFFSET * 2.0f, scrollHeadCol.Rect().GetSize().y));
+        transHeadRoot.SetSize(new Vector2(headNumberWidth + MyCodeHead.X_OFFSET * 2.0f, height));
+        transHeadRoot.SetLeftPosition(0.0f);
+
+        foreach (MyCodeHead h in heads)
+        {
+            h.Width = headNumberWidth;
+            h.Relayout();
+        }
+        yield return new WaitForEndOfFrame();
+
+        // Lines.
+        Vector2 locPos = transLineRoot.localPosition;
+        float oldVal = scrollLineCol.verticalScrollbar.value;
+        scrollLineCol.Rect().offsetMin = new Vector2(scrollHeadCol.Rect().GetSize().x, scrollLineCol.Rect().offsetMin.y);
+        scrollLineCol.Rect().SetSize(new Vector2(this.Rect().GetSize().x - scrollHeadCol.Rect().GetSize().x, scrollLineCol.Rect().GetSize().y));
+
+        lineTextWidth = transLineRoot.GetSize().x;
+        foreach (MyCodeLine l in lines)
+        {
+            if (l.TightWidth > lineTextWidth)
+                lineTextWidth = l.TightWidth;
+        }
+        transLineRoot.SetSize(new Vector2(lineTextWidth + MyCodeLine.X_OFFSET * 2.0f, height));
+        transLineRoot.SetLeftPosition(scrollLineCol.verticalScrollbar.Rect().GetSize().x / 2.0f);
+
+        foreach (MyCodeLine l in lines)
+        {
+            l.Width = lineTextWidth;
+            l.Relayout();
+        }
+        yield return new WaitForEndOfFrame();
+
+        transLineRoot.localPosition = locPos;
+
+        if (reserveScrollValue)
+        {
+            scrollLineCol.verticalScrollbar.value = 1.0f;
+            yield return new WaitForEndOfFrame();
+            scrollLineCol.verticalScrollbar.value = oldVal;
+        }
+        else
+        {
+            transLineRoot.localPosition = locPos;
+        }
+    }
+
+    public void Relayout(bool toBottom = false)
+    {
+        EnsureLastLineEditable();
+
+        StartCoroutine(RelayoutProc(toBottom));
+    }
+
     public int Append(string text)
     {
         GameObject objLn = Instantiate(prefabLine, transLineRoot) as GameObject;
@@ -196,11 +279,92 @@ public class MyCodeEditor : MonoBehaviour
         ln.Height = (float)Screen.height / lineCountPerScreen;
         ln.LineNumber = LineCount;
         ln.SetText(text, Color(text));
+        ln.LineClicked += OnLineClicked;
         lines.Add(ln);
 
-        Relayout(ln);
+        GameObject objHd = Instantiate(prefabHead, transHeadRoot) as GameObject;
+        MyCodeHead hd = objHd.GetComponent<MyCodeHead>();
+        hd.Height = (float)Screen.height / lineCountPerScreen;
+        hd.LineNumber = ln.LineNumber;
+        heads.Add(hd);
 
         return lines.Count;
+    }
+
+    public bool Insert(int index)
+    {
+        if (index < 0 || index >= LineCount)
+            return false;
+
+        string text = string.Empty;
+
+        GameObject objLn = Instantiate(prefabLine, transLineRoot) as GameObject;
+        MyCodeLine ln = objLn.GetComponent<MyCodeLine>();
+        ln.Height = (float)Screen.height / lineCountPerScreen;
+        ln.LineNumber = index;
+        ln.SetText(text, Color(text));
+        ln.LineClicked += OnLineClicked;
+        lines.Insert(index, ln);
+
+        GameObject objHd = Instantiate(prefabHead, transHeadRoot) as GameObject;
+        MyCodeHead hd = objHd.GetComponent<MyCodeHead>();
+        hd.Height = (float)Screen.height / lineCountPerScreen;
+        hd.LineNumber = ln.LineNumber;
+        heads.Insert(index, hd);
+
+        for (int i = index + 1; i < LineCount; ++i)
+        {
+            ++lines[i].LineNumber;
+            ++heads[i].LineNumber;
+        }
+
+        return true;
+    }
+
+    public int Insert(IEnumerable<int> indices)
+    {
+        int n = 0;
+        foreach (int i in indices)
+        {
+            Insert(i + n);
+            ++n;
+        }
+
+        Relayout();
+
+        return n;
+    }
+
+    public bool Remove(int index)
+    {
+        if (index < 0 || index >= LineCount)
+            return false;
+
+        GameObject.Destroy(lines[index].gameObject);
+        GameObject.Destroy(heads[index].gameObject);
+        lines.RemoveAt(index);
+        heads.RemoveAt(index);
+        for (int i = index; i < LineCount; ++i)
+        {
+            --lines[i].LineNumber;
+            --heads[i].LineNumber;
+        }
+
+        return true;
+    }
+
+    public int Remove(IEnumerable<int> indices)
+    {
+        int n = 0;
+        foreach (int i in indices)
+        {
+            Remove(i - n);
+            ++n;
+        }
+
+        Relayout(true);
+
+        return n;
     }
 
     public void Clear()
@@ -209,18 +373,71 @@ public class MyCodeEditor : MonoBehaviour
             GameObject.Destroy(mcl.gameObject);
         lines.Clear();
 
-        textWidth = 0.0f;
+        headNumberWidth = 0.0f;
+        lineTextWidth = 0.0f;
     }
 
-    public void Select(params int[] indices)
+    public bool Unselect(int index)
     {
+        if (index < 0 || index >= LineCount)
+            return false;
+
+        MyCodeHead h = heads[index];
+        h.toggleSelection.isOn = false;
+
+        return true;
     }
 
-    public void Insert(params int[] indices)
+    public void Unselect(IEnumerable<int> indices)
     {
+        foreach (int i in indices)
+        {
+            if (i >= 0 && i < LineCount)
+            {
+                MyCodeHead h = heads[i];
+                h.toggleSelection.isOn = false;
+            }
+        }
     }
 
-    public void Remove(params int[] indices)
+    public void Select(IEnumerable<int> indices)
     {
+        foreach (int i in indices)
+        {
+            if (i >= 0 && i < LineCount)
+            {
+                MyCodeHead h = heads[i];
+                h.toggleSelection.isOn = true;
+            }
+        }
+    }
+
+    public void OnScrollLineColValueChanged(Vector2 val)
+    {
+        scrollHeadCol.verticalScrollbar.value = val.y;
+    }
+
+    private void OnLineClicked(MyCodeLine ln)
+    {
+        codeInput.Show(ln);
+    }
+
+    public void OnInputEdited()
+    {
+        bool relayout = false;
+
+        if (codeInput.Editing != null)
+        {
+            codeInput.Editing.SetText(codeInput.FieldInput.text, Color(codeInput.FieldInput.text));
+
+            relayout = codeInput.Editing == lines.Last();
+        }
+
+        codeInput.Hide();
+
+        if (relayout)
+        {
+            Relayout(true);
+        }
     }
 }

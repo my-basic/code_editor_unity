@@ -185,46 +185,46 @@ namespace lib
         public struct mb_val_bytes_t
         {
             [FieldOffset(0)]
-            IntPtr ptr;
+            public IntPtr ptr;
             [FieldOffset(0)]
-            ulong ul;
+            public ulong ul;
             [FieldOffset(0)]
-            int_t i;
+            public int_t i;
             [FieldOffset(0)]
-            real_t r;
+            public real_t r;
         }
 
         [StructLayout(LayoutKind.Explicit, Pack = 1)]
         public struct mb_value_u
         {
             [FieldOffset(0)]
-            int_t integer;
+            public int_t integer;
             [FieldOffset(0)]
-            real_t float_point;
+            public real_t float_point;
             [FieldOffset(0)]
-            string str;
+            public string str;
             [FieldOffset(0)]
-            mb_data_e type;
+            public mb_data_e type;
             [FieldOffset(0)]
-            IntPtr usertype;
+            public IntPtr usertype;
             [FieldOffset(0)]
-            IntPtr usertype_ref;
+            public IntPtr usertype_ref;
             [FieldOffset(0)]
-            IntPtr array;
+            public IntPtr array;
             [FieldOffset(0)]
-            IntPtr list;
+            public IntPtr list;
             [FieldOffset(0)]
-            IntPtr list_it;
+            public IntPtr list_it;
             [FieldOffset(0)]
-            IntPtr dict;
+            public IntPtr dict;
             [FieldOffset(0)]
-            IntPtr dict_it;
+            public IntPtr dict_it;
             [FieldOffset(0)]
-            IntPtr instance;
+            public IntPtr instance;
             [FieldOffset(0)]
-            IntPtr routine;
+            public IntPtr routine;
             [FieldOffset(0)]
-            mb_val_bytes_t bytes;
+            public mb_val_bytes_t bytes;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]

@@ -147,6 +147,11 @@ internal static class RectTransformExtensions
         trans.localPosition = new Vector3(newPos + (trans.pivot.x * trans.rect.width), trans.localPosition.y, trans.localPosition.z);
     }
 
+    public static void SetRightPosition(this RectTransform trans, float newPos)
+    {
+        trans.localPosition = new Vector3(newPos - ((1f - trans.pivot.x) * trans.rect.width), trans.localPosition.y, trans.localPosition.z);
+    }
+
     public static void SetLeftBottomPosition(this RectTransform trans, Vector2 newPos)
     {
         trans.localPosition = new Vector3(newPos.x + (trans.pivot.x * trans.rect.width), newPos.y + (trans.pivot.y * trans.rect.height), trans.localPosition.z);
@@ -185,12 +190,37 @@ internal static class RectTransformExtensions
         SetSize(trans, new Vector2(trans.rect.size.x, newSize));
     }
 
+    public static RectTransform Rect(this MyCodeEditor ui)
+    {
+        return ui.GetComponent<RectTransform>();
+    }
+
+    public static RectTransform Rect(this MyCodeHead ui)
+    {
+        return ui.GetComponent<RectTransform>();
+    }
+
     public static RectTransform Rect(this MyCodeLine ui)
     {
         return ui.GetComponent<RectTransform>();
     }
 
+    public static RectTransform Rect(this ScrollRect ui)
+    {
+        return ui.GetComponent<RectTransform>();
+    }
+
+    public static RectTransform Rect(this Scrollbar ui)
+    {
+        return ui.GetComponent<RectTransform>();
+    }
+
     public static RectTransform Rect(this Button ui)
+    {
+        return ui.GetComponent<RectTransform>();
+    }
+
+    public static RectTransform Rect(this Toggle ui)
     {
         return ui.GetComponent<RectTransform>();
     }

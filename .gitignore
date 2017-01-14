@@ -1,4 +1,5 @@
 *.csproj
+*.opendb
 *.sln
 *.suo
 /prj/Library
