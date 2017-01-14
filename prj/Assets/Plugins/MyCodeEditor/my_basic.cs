@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using bool_t = System.Int32;
+using bool_t = System.Char;
 using int_t = System.Int32;
 using real_t = System.Single;
 
@@ -20,8 +20,8 @@ namespace lib
 
         public const string LIB_NAME = "my_basic";
 
-        public const bool_t True = 1;
-        public const bool_t False = 0;
+        public const bool_t True = (bool_t)1;
+        public const bool_t False = (bool_t)0;
 
         public const int MB_FUNC_OK = 0;
         public const int MB_FUNC_IGNORE = 1;
@@ -181,7 +181,7 @@ namespace lib
             MB_MS_RETURNED = 1 << 1
         }
 
-        [StructLayout(LayoutKind.Explicit, Pack = 1)]
+        [StructLayout(LayoutKind.Explicit, CharSet = CharSet.Ansi, Pack = 1)]
         public struct mb_val_bytes_t
         {
             [FieldOffset(0)]
@@ -194,7 +194,7 @@ namespace lib
             public real_t r;
         }
 
-        [StructLayout(LayoutKind.Explicit, Pack = 1)]
+        [StructLayout(LayoutKind.Explicit, CharSet = CharSet.Ansi, Pack = 1)]
         public struct mb_value_u
         {
             [FieldOffset(0)]
@@ -227,7 +227,7 @@ namespace lib
             public mb_val_bytes_t bytes;
         }
 
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
         public struct mb_value_t
         {
             public mb_data_e type;

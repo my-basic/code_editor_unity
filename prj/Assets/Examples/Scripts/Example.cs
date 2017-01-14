@@ -140,5 +140,9 @@ public class Example : MonoBehaviour
         my_basic.mb_load_string(bas, "foo(355, 113)");
         //my_basic.mb_load_string(bas, "bar(3.24)");
         my_basic.mb_run(bas);
+
+        print(sizeof(my_basic.mb_data_e));
+        print(System.Runtime.InteropServices.Marshal.SizeOf(typeof(my_basic.mb_value_t)));
+        print(System.Runtime.InteropServices.Marshal.SizeOf(typeof(my_basic.mb_value_u)));
     }
 }
