@@ -8,7 +8,7 @@ This is a code editor for [MY-BASIC](https://github.com/paladin-t/my_basic) powe
 
 ![](docs/run.png)
 
-It supports code manipulating, interpreter interacting, and future customization. I used MY-BASIC DLLs for Windows for demonstration. You can build shared object for other platforms by yourself, or use other interpreters. See the link or more information about [MY-BASIC](https://github.com/paladin-t/my_basic).
+It supports code manipulating, interpreter interacting, and future customization. I used MY-BASIC DLLs for Windows for demonstration. You can build shared object for other platforms by yourself, or use other interpreters. See the link for more information about [MY-BASIC](https://github.com/paladin-t/my_basic).
 
 ## Configuration
 
