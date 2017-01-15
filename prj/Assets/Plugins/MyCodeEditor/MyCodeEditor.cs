@@ -1,4 +1,29 @@
-﻿using System.Collections;
+﻿/*
+** This source file is part of MY-BASIC Code Editor (Unity)
+**
+** For the latest info, see https://github.com/paladin-t/my_basic_code_editor_unity/
+**
+** Copyright (C) 2017 Wang Renxin
+**
+** Permission is hereby granted, free of charge, to any person obtaining a copy of
+** this software and associated documentation files (the "Software"), to deal in
+** the Software without restriction, including without limitation the rights to
+** use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+** the Software, and to permit persons to whom the Software is furnished to do so,
+** subject to the following conditions:
+**
+** The above copyright notice and this permission notice shall be included in all
+** copies or substantial portions of the Software.
+**
+** THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+** IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+** FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+** COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+** IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+** CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -47,6 +72,8 @@ public class MyCodeEditor : MonoBehaviour
 
     private List<MyCodeLine> lines = new List<MyCodeLine>();
 
+    private List<string> userFuncs = new List<string>();
+
     private float headNumberWidth = 0.0f;
 
     private float lineTextWidth = 0.0f;
@@ -83,15 +110,25 @@ public class MyCodeEditor : MonoBehaviour
     {
         get
         {
-            List<int> lst = new List<int>();
             for (int i = 0; i < LineCount; ++i)
             {
                 MyCodeHead h = heads[i];
                 if (h.toggleSelection.isOn)
-                    lst.Add(i);
+                    yield return i;
             }
+        }
+    }
 
-            return lst;
+    public IEnumerable<string> SelectedText
+    {
+        get
+        {
+            foreach (int i in Selected)
+            {
+                MyCodeLine ln = lines[i];
+
+                yield return ln.Text;
+            }
         }
     }
 
@@ -99,23 +136,12 @@ public class MyCodeEditor : MonoBehaviour
     {
         fontMaterial.mainTexture.filterMode = FilterMode.Point;
 
-        colorings.Clear();
-        Coloring[] cs = new Coloring[] { keyword, reserved, symbol, opcode, function };
-        foreach (Coloring coloring in cs)
-        {
-            foreach (string e in coloring.Elements)
-            {
-                Coloring c = new Coloring();
-                c.texts = e;
-                c.color = coloring.color;
-                colorings.Add(c);
-            }
-        }
-        colorings.Sort((x, y) => y.texts.Length - x.texts.Length);
+        RefillColoring();
     }
 
     private void OnDestroy()
     {
+        Clear();
     }
 
     private string Color(string str)
@@ -193,6 +219,45 @@ public class MyCodeEditor : MonoBehaviour
         }
 
         return str;
+    }
+
+    private void RefillColoring()
+    {
+        colorings.Clear();
+        Coloring[] cs = new Coloring[] { keyword, reserved, symbol, opcode, function };
+        foreach (Coloring coloring in cs)
+        {
+            foreach (string e in coloring.Elements)
+            {
+                Coloring c = new Coloring();
+                c.texts = e;
+                c.color = coloring.color;
+                colorings.Add(c);
+            }
+        }
+        foreach (string f in userFuncs)
+        {
+            Coloring c = new Coloring();
+            c.texts = f;
+            c.color = function.color;
+            colorings.Add(c);
+        }
+        colorings.Sort((x, y) => y.texts.Length - x.texts.Length);
+    }
+
+    public void AddFunction(string func)
+    {
+        userFuncs.Add(func);
+    }
+
+    public void AddFunction(IEnumerable<string> funcs)
+    {
+        userFuncs.AddRange(funcs);
+    }
+
+    public void ClearFunction()
+    {
+        userFuncs.Clear();
     }
 
     private void EnsureLastLineEditable()
@@ -397,6 +462,15 @@ public class MyCodeEditor : MonoBehaviour
                 MyCodeHead h = heads[i];
                 h.toggleSelection.isOn = false;
             }
+        }
+    }
+
+    public void Select(int index)
+    {
+        if (index >= 0 && index < LineCount)
+        {
+            MyCodeHead h = heads[index];
+            h.toggleSelection.isOn = true;
         }
     }
 

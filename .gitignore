@@ -2,6 +2,7 @@
 *.opendb
 *.sln
 *.suo
+/prj/Debug
 /prj/Library
 /prj/Temp
 /prj/prj.VC.db

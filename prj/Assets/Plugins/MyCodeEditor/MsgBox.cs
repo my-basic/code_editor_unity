@@ -23,46 +23,57 @@
 ** CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MyCodeInput : MonoBehaviour
+public class MsgBox : MonoBehaviour
 {
-    public MyCodeLine Editing { get; private set; }
+    public Text textTitle = null;
 
-    public InputField FieldInput
+    public Text textMsg = null;
+
+    public Action<MsgBox> OkClicked = null;
+
+    private Stack<KeyValuePair<string, object>> stack = new Stack<KeyValuePair<string, object>>();
+
+    public bool Shown { get { return stack.Count != 0; } }
+
+    public void Show(string title, object msg)
     {
-        get
-        {
-            InputField i = GetComponent<InputField>();
-
-            return i;
-        }
-    }
-
-    public void Show(MyCodeLine ln)
-    {
-        if (Editing != null)
-            Editing.gameObject.SetActive(true);
-
         gameObject.SetActive(true);
 
-        FieldInput.Rect().SetSize(ln.Rect().GetSize());
-        FieldInput.Rect().transform.localPosition = (ln.Rect().transform.localPosition);
-        FieldInput.text = ln.Text;
+        stack.Push(new KeyValuePair<string, object>(title, msg));
 
-        ln.gameObject.SetActive(false);
-
-        Editing = ln;
+        textTitle.text = title;
+        textMsg.text = msg.ToString();
     }
 
-    public void Hide()
+    public void Show(object msg)
     {
-        if (Editing != null)
-            Editing.gameObject.SetActive(true);
+        gameObject.SetActive(true);
 
-        gameObject.SetActive(false);
+        stack.Push(new KeyValuePair<string, object>(null, msg));
 
-        Editing = null;
+        textTitle.text = string.Empty;
+        textMsg.text = msg.ToString();
+    }
+
+    public void OnOkClicked()
+    {
+        if (OkClicked != null)
+            OkClicked(this);
+
+        stack.Pop();
+        if (stack.Count == 0)
+        {
+            gameObject.SetActive(false);
+        }
+        else
+        {
+            textTitle.text = stack.Peek().Key;
+            textMsg.text = stack.Peek().Value.ToString();
+        }
     }
 }
