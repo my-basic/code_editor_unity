@@ -1,4 +1,5 @@
 *.csproj
+*.DS_Store
 *.opendb
 *.sln
 *.suo

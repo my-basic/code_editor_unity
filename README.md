@@ -8,14 +8,14 @@ This is a code editor for [MY-BASIC](https://github.com/paladin-t/my_basic) powe
 
 ![](docs/run.png)
 
-It supports code manipulating, interpreter interacting, and future customization. I used MY-BASIC DLLs for Windows for demonstration. You can build shared object for other platforms by yourself, or use other interpreters. See the link for more information about [MY-BASIC](https://github.com/paladin-t/my_basic).
+It supports code manipulating, interpreter interacting, and future customization. I used the MY-BASIC DLL for Windows, and Bundle for macOS as demonstration. You can build shared object for other platforms by yourself, or use other interpreters. See the link for more information about [MY-BASIC](https://github.com/paladin-t/my_basic).
 
 Note this repository doesn't contain any extended libraries or other playable stuffs. It's just a simple reusable code editor/shell demonstration.
 
 ## Configuration
 
-![](docs/config.png)
-
 You can configure keywords, reserved words, symbols, opcodes, etc. as well as in which colors to represent them.
 
 The editor also allows to configure how many lines of code is expected to represent, assuming taking full height of the screen.
+
+![](docs/config.png)
