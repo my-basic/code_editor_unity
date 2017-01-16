@@ -23,6 +23,7 @@
 ** CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -110,12 +111,15 @@ public class MyCodeEditor : MonoBehaviour
     {
         get
         {
+            List<int> lst = new List<int>();
             for (int i = 0; i < LineCount; ++i)
             {
                 MyCodeHead h = heads[i];
                 if (h.toggleSelection.isOn)
-                    yield return i;
+                    lst.Add(i);
             }
+
+            return lst;
         }
     }
 
@@ -131,6 +135,8 @@ public class MyCodeEditor : MonoBehaviour
             }
         }
     }
+
+    public Action<int> HeadClicked = null;
 
     private void Start()
     {
@@ -351,6 +357,7 @@ public class MyCodeEditor : MonoBehaviour
         MyCodeHead hd = objHd.GetComponent<MyCodeHead>();
         hd.Height = (float)Screen.height / lineCountPerScreen;
         hd.LineNumber = ln.LineNumber;
+        hd.HeadClicked += OnHeadClicked;
         heads.Add(hd);
 
         return lines.Count;
@@ -375,6 +382,7 @@ public class MyCodeEditor : MonoBehaviour
         MyCodeHead hd = objHd.GetComponent<MyCodeHead>();
         hd.Height = (float)Screen.height / lineCountPerScreen;
         hd.LineNumber = ln.LineNumber;
+        hd.HeadClicked += OnHeadClicked;
         heads.Insert(index, hd);
 
         for (int i = index + 1; i < LineCount; ++i)
@@ -486,6 +494,15 @@ public class MyCodeEditor : MonoBehaviour
         }
     }
 
+    public void ScrollToLine(int index)
+    {
+        if (index < 0) index = 0;
+        else if (index >= LineCount) index = LineCount - 1;
+
+        float val = 1.0f - (float)index / LineCount;
+        scrollLineCol.verticalScrollbar.value = val;
+    }
+
     public void OnScrollLineColValueChanged(Vector2 val)
     {
         scrollHeadCol.verticalScrollbar.value = val.y;
@@ -494,6 +511,12 @@ public class MyCodeEditor : MonoBehaviour
     private void OnLineClicked(MyCodeLine ln)
     {
         codeInput.Show(ln);
+    }
+
+    private void OnHeadClicked(MyCodeHead hd)
+    {
+        if (HeadClicked != null)
+            HeadClicked(hd.LineNumber);
     }
 
     public void OnInputEdited()

@@ -23,38 +23,53 @@
 ** CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class MsgBox : MonoBehaviour
 {
+    private struct MsgInfo
+    {
+        public string title;
+
+        public object msg;
+
+        public ClickedEventHandler callback;
+
+        public MsgInfo(string t, object m, ClickedEventHandler c)
+        {
+            title = t;
+            msg = m;
+            callback = c;
+        }
+    }
+
     public Text textTitle = null;
 
     public Text textMsg = null;
 
-    public Action<MsgBox> OkClicked = null;
-
-    private Stack<KeyValuePair<string, object>> stack = new Stack<KeyValuePair<string, object>>();
+    private Stack<MsgInfo> stack = new Stack<MsgInfo>();
 
     public bool Shown { get { return stack.Count != 0; } }
 
-    public void Show(string title, object msg)
+    public delegate void ClickedEventHandler(MsgBox mb);
+
+    public void Show(string title, object msg, ClickedEventHandler callback = null)
     {
         gameObject.SetActive(true);
 
-        stack.Push(new KeyValuePair<string, object>(title, msg));
+        stack.Push(new MsgInfo(title, msg, callback));
 
         textTitle.text = title;
         textMsg.text = msg.ToString();
     }
 
-    public void Show(object msg)
+    public void Show(object msg, ClickedEventHandler callback = null)
     {
         gameObject.SetActive(true);
 
-        stack.Push(new KeyValuePair<string, object>(null, msg));
+        stack.Push(new MsgInfo(null, msg, callback));
 
         textTitle.text = string.Empty;
         textMsg.text = msg.ToString();
@@ -62,8 +77,8 @@ public class MsgBox : MonoBehaviour
 
     public void OnOkClicked()
     {
-        if (OkClicked != null)
-            OkClicked(this);
+        if (stack.Peek().callback != null)
+            stack.Peek().callback(this);
 
         stack.Pop();
         if (stack.Count == 0)
@@ -72,8 +87,8 @@ public class MsgBox : MonoBehaviour
         }
         else
         {
-            textTitle.text = stack.Peek().Key;
-            textMsg.text = stack.Peek().Value.ToString();
+            textTitle.text = stack.Peek().title;
+            textMsg.text = stack.Peek().msg.ToString();
         }
     }
 }

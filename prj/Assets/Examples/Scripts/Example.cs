@@ -38,6 +38,8 @@ public class Example : MonoBehaviour
 
     public MsgBox msgbox = null;
 
+    public bool pauseOnMsg = true;
+
     #region Threading
 
     private static object dataLock = new object();
@@ -77,11 +79,15 @@ public class Example : MonoBehaviour
             case RunMode.Once:
                 Debug.Log(">" + ln.ToString());
 
+                editor.ScrollToLine(ln);
+
                 mode = RunMode.Paused;
 
                 return true;
             case RunMode.Always:
                 Debug.Log(">" + ln.ToString());
+
+                editor.ScrollToLine(ln);
 
                 return true;
             case RunMode.Paused:
@@ -163,7 +169,20 @@ public class Example : MonoBehaviour
 
             if (m != null)
             {
-                msgbox.Show(m);
+                if (pauseOnMsg && mode == RunMode.Always)
+                {
+                    mode = RunMode.Paused;
+
+                    msgbox.Show
+                    (
+                        m,
+                        (_) => { mode = RunMode.Always; }
+                    );
+                }
+                else
+                {
+                    msgbox.Show(m);
+                }
             }
 
             yield return wait;
@@ -224,13 +243,17 @@ public class Example : MonoBehaviour
 
     public void OnPauseClicked()
     {
-        mode = RunMode.Paused;
+        if (mode == RunMode.Always)
+            mode = RunMode.Paused;
     }
 
     public void OnStopClicked()
     {
-        mode = RunMode.Stopped;
+        if (mode != RunMode.Stopped)
+        {
+            mode = RunMode.Stopped;
 
-        interp.Stop();
+            interp.Stop();
+        }
     }
 }

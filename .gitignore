@@ -3,6 +3,7 @@
 *.opendb
 *.sln
 *.suo
+*.userprefs
 /prj/Debug
 /prj/Library
 /prj/Temp

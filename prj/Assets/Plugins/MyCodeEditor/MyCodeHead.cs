@@ -23,6 +23,7 @@
 ** CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -117,6 +118,18 @@ public class MyCodeHead : MonoBehaviour
         }
     }
 
+    public Action<MyCodeHead> HeadClicked = null;
+
+    private void Awake()
+    {
+        buttonLineNumber.onClick.AddListener(OnButtonHeadClicked);
+    }
+
+    private void OnDestroy()
+    {
+        buttonLineNumber.onClick.RemoveListener(OnButtonHeadClicked);
+    }
+
     public void Relayout()
     {
         this.Rect().SetLeftTopPosition(new Vector2(X_OFFSET, -Y_OFFSET - Height * lineNumber));
@@ -124,5 +137,11 @@ public class MyCodeHead : MonoBehaviour
         toggleSelection.Rect().SetLeftPosition(-this.Rect().GetSize().x / 2.0f);
         buttonLineNumber.Rect().SetSize(new Vector2(this.Rect().GetSize().x - toggleSelection.Rect().GetSize().x, buttonLineNumber.Rect().GetSize().y));
         buttonLineNumber.Rect().SetLeftPosition(-this.Rect().GetSize().x / 2.0f + toggleSelection.Rect().GetSize().x);
+    }
+
+    private void OnButtonHeadClicked()
+    {
+        if (HeadClicked != null)
+            HeadClicked(this);
     }
 }
