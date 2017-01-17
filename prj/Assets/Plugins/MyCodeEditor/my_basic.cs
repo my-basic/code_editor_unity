@@ -43,7 +43,13 @@ namespace lib
             }
         }
 
+#if UNITY_EDITOR
         public const string LIB_NAME = "my_basic";
+#elif UNITY_IOS || UNITY_ANDROID
+        public const string LIB_NAME = "__Internal";
+#else
+        public const string LIB_NAME = "my_basic.dll";
+#endif
 
         public const bool_t True = (bool_t)1;
         public const bool_t False = (bool_t)0;
@@ -270,7 +276,7 @@ namespace lib
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate int mb_routine_func_t(IntPtr s, ref IntPtr l, ref mb_value_t va, uint ca, IntPtr r, [MarshalAs(UnmanagedType.FunctionPtr)]mb_has_routine_arg_func_t has_arg, [MarshalAs(UnmanagedType.FunctionPtr)]mb_pop_routine_arg_func_t pop_arg);
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate void mb_debug_stepped_handler_t(IntPtr s, ref IntPtr l, string f, int p, ushort row, ushort col);
+        public delegate int mb_debug_stepped_handler_t(IntPtr s, ref IntPtr l, string f, int p, ushort row, ushort col);
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate void mb_error_handler_t(IntPtr s, mb_error_e e, string m, string f, int p, ushort row, ushort col, int abort_code);
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]

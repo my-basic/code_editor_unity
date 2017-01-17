@@ -85,7 +85,13 @@ namespace lib
         private IntPtr bas = IntPtr.Zero;
         public IntPtr Bas { get { return bas; } }
 
-        public bool Finished { get { return co != null; } }
+        public bool Finished
+        {
+            get
+            {
+                return co == null || thread == null || !thread.IsAlive;
+            }
+        }
 
         public Func<int, bool> Stepped = null;
 
@@ -122,30 +128,30 @@ namespace lib
         {
             lock (dataLock)
             {
-                string err = null;
                 if (e != my_basic.mb_error_e.SE_NO_ERR)
                 {
+                    string full = null;
                     if (f != null)
                     {
                         if (e == my_basic.mb_error_e.SE_RN_WRONG_FUNCTION_REACHED)
                         {
-                            err = (string.Format("ERROR\n  Ln {0}, Func: {1}, Msg: {2}.\n", row, f, m));
+                            full = string.Format("ERROR\n  Ln {0}, Func: {1}, Msg: {2}.\n", row, f, m);
                         }
                         else
                         {
-                            err = (string.Format("ERROR\n  Ln {0}, File: {1}, Msg: {2}.\n", row, f, m));
+                            full = string.Format("ERROR\n  Ln {0}, File: {1}, Msg: {2}.\n", row, f, m);
                         }
                     }
                     else
                     {
-                        err = (string.Format("ERROR\n  Ln {0}, Msg: {1}.\n", row, m));
+                        full = string.Format("ERROR\n  Ln {0}, Msg: {1}.\n", row, m);
                     }
+                    error = new Error(s, e, m, f, p, row, col, abort_code, full);
                 }
-                error = new Error(s, e, m, f, p, row, col, abort_code, err);
             }
         }
 
-        private static void on_stepped(IntPtr s, ref IntPtr l, string f, int p, ushort row, ushort col)
+        private static int on_stepped(IntPtr s, ref IntPtr l, string f, int p, ushort row, ushort col)
         {
             lock (dataLock)
             {
@@ -156,23 +162,21 @@ namespace lib
             bool w = false;
             do
             {
-                lock (stopLock)
-                {
-                    if (stop)
-                    {
-                        my_basic.mb_schedule_suspend(s, my_basic.MB_FUNC_BYE);
-
-                        return;
-                    }
-                }
-
                 lock (dataLock)
                 {
                     w = waiting;
                 }
 
-                System.Threading.Thread.Sleep(20);
+                lock (stopLock)
+                {
+                    if (stop)
+                        return my_basic.MB_FUNC_BYE;
+                }
+
+                System.Threading.Thread.Sleep(10);
             } while (w);
+
+            return my_basic.MB_FUNC_OK;
         }
 
         #endregion
@@ -199,10 +203,8 @@ namespace lib
 
             while (thread != null && thread.IsAlive)
             {
-                lock (stopLock)
-                {
-                    stop = true;
-                }
+                Stop();
+
                 yield return wait;
             }
             thread = null;
@@ -210,7 +212,6 @@ namespace lib
             stop = false;
             line = 0;
             waiting = false;
-            yield return wait;
 
             my_basic.mb_reset(out bas);
             my_basic.mb_load_string(bas, code);

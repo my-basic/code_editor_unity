@@ -65,6 +65,13 @@ public class Example : MonoBehaviour
 
     private void OnDestroy()
     {
+        interp.Stop();
+
+        while (!interp.Finished)
+        {
+            System.Threading.Thread.Sleep(10);
+        }
+
         interp.Close();
 
         Interpreter.Dispose();
@@ -75,7 +82,7 @@ public class Example : MonoBehaviour
         switch (mode)
         {
             case RunMode.Stopped:
-                return false;
+                return true;
             case RunMode.Once:
                 Debug.Log(">" + ln.ToString());
 
@@ -134,15 +141,15 @@ public class Example : MonoBehaviour
             switch (val.type)
             {
                 case my_basic.mb_data_e.MB_DT_INT:
-                    msg = (val.value.integer);
+                    msg = val.value.integer;
 
                     break;
                 case my_basic.mb_data_e.MB_DT_REAL:
-                    msg = (val.value.float_point);
+                    msg = val.value.float_point;
 
                     break;
                 case my_basic.mb_data_e.MB_DT_STRING:
-                    msg = (val.value.String);
+                    msg = val.value.String;
 
                     break;
                 default:
@@ -203,6 +210,8 @@ public class Example : MonoBehaviour
 
     public void OnInsertClicked()
     {
+        if (msgbox.Shown) return;
+
         editor.Insert(editor.Selected);
 
         editor.Unselect(editor.Selected);
@@ -210,11 +219,15 @@ public class Example : MonoBehaviour
 
     public void OnDeleteClicked()
     {
+        if (msgbox.Shown) return;
+
         editor.Remove(editor.Selected);
     }
 
     public void OnRunClicked()
     {
+        if (msgbox.Shown) return;
+
         RunMode m = mode;
 
         mode = RunMode.Always;
@@ -229,6 +242,8 @@ public class Example : MonoBehaviour
 
     public void OnStepClicked()
     {
+        if (msgbox.Shown) return;
+
         RunMode m = mode;
 
         mode = RunMode.Once;
@@ -243,12 +258,16 @@ public class Example : MonoBehaviour
 
     public void OnPauseClicked()
     {
+        if (msgbox.Shown) return;
+
         if (mode == RunMode.Always)
             mode = RunMode.Paused;
     }
 
     public void OnStopClicked()
     {
+        if (msgbox.Shown) return;
+
         if (mode != RunMode.Stopped)
         {
             mode = RunMode.Stopped;
