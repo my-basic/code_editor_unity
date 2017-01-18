@@ -318,7 +318,7 @@ namespace lib
         [DllImport(LIB_NAME, CallingConvention = CallingConvention.Cdecl)]
         public static extern int mb_close(out IntPtr s);
         [DllImport(LIB_NAME, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int mb_reset(out IntPtr s, bool_t clrf = False);
+        public static extern int mb_reset(ref IntPtr s, bool_t clrf = False);
 
         [DllImport(LIB_NAME, CallingConvention = CallingConvention.Cdecl)]
         public static extern int mb_register_func(IntPtr s, string n, [MarshalAs(UnmanagedType.FunctionPtr)]mb_func_t f);

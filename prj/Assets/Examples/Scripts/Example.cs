@@ -26,6 +26,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using AOT;
 using UnityEngine;
 using UnityEngine.UI;
 using lib;
@@ -190,6 +191,7 @@ public class Example : MonoBehaviour
 
     #region Threading
 
+    [MonoPInvokeCallback(typeof(my_basic.mb_func_t))]
     private static int output(IntPtr s, ref IntPtr l)
     {
         my_basic.mb_value_t val;

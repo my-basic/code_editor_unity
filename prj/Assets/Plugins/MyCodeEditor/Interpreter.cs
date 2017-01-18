@@ -26,6 +26,7 @@
 using System;
 using System.Collections;
 using System.Threading;
+using AOT;
 using UnityEngine;
 
 namespace lib
@@ -124,6 +125,7 @@ namespace lib
 
         #region Threading
 
+        [MonoPInvokeCallback(typeof(my_basic.mb_error_handler_t))]
         private static void on_error(IntPtr s, my_basic.mb_error_e e, string m, string f, int p, ushort row, ushort col, int abort_code)
         {
             lock (dataLock)
@@ -151,6 +153,7 @@ namespace lib
             }
         }
 
+        [MonoPInvokeCallback(typeof(my_basic.mb_debug_stepped_handler_t))]
         private static int on_stepped(IntPtr s, ref IntPtr l, string f, int p, ushort row, ushort col)
         {
             lock (dataLock)
@@ -213,7 +216,7 @@ namespace lib
             line = 0;
             waiting = false;
 
-            my_basic.mb_reset(out bas);
+            my_basic.mb_reset(ref bas);
             my_basic.mb_load_string(bas, code);
 
             thread = new Thread(new ParameterizedThreadStart(Thread));
