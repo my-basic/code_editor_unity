@@ -36,7 +36,11 @@ Execute the `bin/my_basic_code_editor_unity.exe` to run the editor.
 
 ![](docs/edit.png)
 
-* Select some lines, then make insertion and deletion by click the buttons
+* Select a file slot to save and load
+
+![](docs/file.png)
+
+* Select some lines, then make insertion and deletion by clicking the buttons
 
 ![](docs/curd.png)
 
@@ -46,10 +50,6 @@ Execute the `bin/my_basic_code_editor_unity.exe` to run the editor.
 * Click the `STOP` button to terminate an execution
 
 ![](docs/exe.png)
-
-* Select a file slot to save and load
-
-![](docs/file.png)
 
 ## How to use the library
 
