@@ -1,6 +1,6 @@
 # MY-BASIC Code Editor (Unity)
 
-**Copyright (C) 2017 [Wang Renxin](https://cn.linkedin.com/in/wang-renxin-02049443). All rights reserved.**
+**Copyright (C) 2017 [Wang Renxin](https://github.com/paladin-t). All rights reserved.**
 
 ## Introduction
 
