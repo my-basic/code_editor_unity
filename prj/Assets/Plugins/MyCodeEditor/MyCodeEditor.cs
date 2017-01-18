@@ -84,8 +84,13 @@ public class MyCodeEditor : MonoBehaviour
         get
         {
             StringBuilder sb = new StringBuilder();
-            foreach (MyCodeLine ln in lines)
+            for (int i = 0; i < lines.Count; ++i)
+            {
+                MyCodeLine ln = lines[i];
+                if (i == lines.Count - 1 && string.IsNullOrEmpty(ln.Text))
+                    continue;
                 sb.AppendLine(ln.Text);
+            }
 
             return sb.ToString();
         }
@@ -306,7 +311,7 @@ public class MyCodeEditor : MonoBehaviour
         scrollLineCol.Rect().offsetMin = new Vector2(scrollHeadCol.Rect().GetSize().x, scrollLineCol.Rect().offsetMin.y);
         scrollLineCol.Rect().SetSize(new Vector2(this.Rect().GetSize().x - scrollHeadCol.Rect().GetSize().x, scrollLineCol.Rect().GetSize().y));
 
-        lineTextWidth = transLineRoot.GetSize().x;
+        lineTextWidth = scrollLineCol.Rect().GetSize().x - 3;
         foreach (MyCodeLine l in lines)
         {
             if (l.TightWidth > lineTextWidth)
@@ -314,6 +319,7 @@ public class MyCodeEditor : MonoBehaviour
         }
         transLineRoot.SetSize(new Vector2(lineTextWidth + MyCodeLine.X_OFFSET * 2.0f, height));
         transLineRoot.SetLeftPosition(scrollLineCol.verticalScrollbar.Rect().GetSize().x / 2.0f);
+        yield return new WaitForEndOfFrame();
 
         foreach (MyCodeLine l in lines)
         {
@@ -442,6 +448,10 @@ public class MyCodeEditor : MonoBehaviour
 
     public void Clear()
     {
+        foreach(MyCodeHead hd in heads)
+            GameObject.Destroy(hd.gameObject);
+        heads.Clear();
+
         foreach (MyCodeLine mcl in lines)
             GameObject.Destroy(mcl.gameObject);
         lines.Clear();

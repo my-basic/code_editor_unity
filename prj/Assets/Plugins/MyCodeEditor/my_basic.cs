@@ -43,7 +43,7 @@ namespace lib
             }
         }
 
-#if UNITY_EDITOR
+#if UNITY_EDITOR || UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX
         public const string LIB_NAME = "my_basic";
 #elif UNITY_IOS || UNITY_ANDROID
         public const string LIB_NAME = "__Internal";

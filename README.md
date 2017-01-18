@@ -32,12 +32,24 @@ editor.AddFunction("???");
 
 Execute the `bin/my_basic_code_editor_unity.exe` to run the editor.
 
-* Click a line to input code.
-* Select some lines, then make insertion and deletion by click the buttons.
-* Click the `RUN` button to run the code top down.
-* Click the `STEP` button to run the code step by step.
-* Click the `PAUSE` button to pause a top down execution.
-* Click the `STOP` button to terminate an execution.
+* Click a line to input code
+
+![](docs/edit.png)
+
+* Select some lines, then make insertion and deletion by click the buttons
+
+![](docs/curd.png)
+
+* Click the `RUN` button to run the code top down
+* Click the `STEP` button to run the code step by step
+* Click the `PAUSE` button to pause a top down execution
+* Click the `STOP` button to terminate an execution
+
+![](docs/exe.png)
+
+* Select a file slot to save and load
+
+![](docs/file.png)
 
 ## How to use the library
 

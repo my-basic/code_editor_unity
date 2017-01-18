@@ -25,7 +25,9 @@
 
 using System;
 using System.Collections;
+using System.IO;
 using UnityEngine;
+using UnityEngine.UI;
 using lib;
 
 public class Example : MonoBehaviour
@@ -38,6 +40,8 @@ public class Example : MonoBehaviour
 
     public MsgBox msgbox = null;
 
+    public Dropdown dropdownFile = null;
+
     public bool pauseOnMsg = true;
 
     #region Threading
@@ -46,6 +50,66 @@ public class Example : MonoBehaviour
     private static object msg = null;
 
     #endregion
+
+    private string FilePath
+    {
+        get
+        {
+            string result = Application.persistentDataPath;
+            if (!result.EndsWith("\\") && !result.EndsWith("/"))
+                result += "/";
+            result += string.Format("file_{0}.bas", dropdownFile.value);
+
+            return result;
+        }
+    }
+
+    private string ConfigFilePath
+    {
+        get
+        {
+            string result = Application.persistentDataPath;
+            if (!result.EndsWith("\\") && !result.EndsWith("/"))
+                result += "/";
+            result += "config.txt";
+
+            return result;
+        }
+    }
+
+    private int LastEdited
+    {
+        get
+        {
+            if (!File.Exists(ConfigFilePath))
+                return -1;
+
+            using (FileStream fs = new FileStream(ConfigFilePath, FileMode.Open, FileAccess.Read))
+            {
+                using (StreamReader sr = new StreamReader(fs))
+                {
+                    string l = sr.ReadLine();
+
+                    return int.Parse(l);
+                }
+            }
+        }
+        set
+        {
+            if (!File.Exists(ConfigFilePath))
+            {
+                using (FileStream fs = new FileStream(ConfigFilePath, FileMode.OpenOrCreate, FileAccess.Write)) { }
+            }
+
+            using (FileStream fs = new FileStream(ConfigFilePath, FileMode.Truncate, FileAccess.Write))
+            {
+                using (StreamWriter sw = new StreamWriter(fs))
+                {
+                    sw.Write(dropdownFile.value.ToString());
+                }
+            }
+        }
+    }
 
     private void Start()
     {
@@ -60,7 +124,7 @@ public class Example : MonoBehaviour
 
         StartCoroutine(Messaging());
 
-        StartCoroutine(FillTestCode());
+        StartCoroutine(FillLastCode());
     }
 
     private void OnDestroy()
@@ -196,16 +260,69 @@ public class Example : MonoBehaviour
         }
     }
 
-    private IEnumerator FillTestCode()
+    private IEnumerator FillLastCode()
     {
         yield return new WaitForEndOfFrame();
 
-        editor.Append("a = 22");
-        editor.Append("b = 7");
-        editor.Append("output(a / b)");
-        editor.Append("output(\"hello\")");
+        if (LastEdited == -1)
+        {
+            editor.Append("a = 22");
+            editor.Append("b = 7");
+            editor.Append("output(a / b)");
+            editor.Append("output(\"Hello World!\")");
 
-        editor.Relayout();
+            editor.Relayout();
+        }
+        else
+        {
+            dropdownFile.value = LastEdited;
+            OnLoadClicked();
+        }
+    }
+
+    public void OnLoadClicked()
+    {
+        if (msgbox.Shown) return;
+
+        if (!File.Exists(FilePath))
+        {
+            msgbox.Show("File", "Blank file, not loaded.");
+
+            return;
+        }
+
+        editor.Clear();
+        using (FileStream fs = new FileStream(FilePath, FileMode.Open, FileAccess.Read))
+        {
+            using (StreamReader sr = new StreamReader(fs))
+            {
+                string code = sr.ReadToEnd();
+                editor.Text = code;
+                editor.Relayout();
+            }
+        }
+
+        LastEdited = dropdownFile.value;
+    }
+
+    public void OnSaveClicked()
+    {
+        if (msgbox.Shown) return;
+
+        if (!File.Exists(FilePath))
+        {
+            using (FileStream fs = new FileStream(FilePath, FileMode.OpenOrCreate, FileAccess.Write)) { }
+        }
+
+        using (FileStream fs = new FileStream(FilePath, FileMode.Truncate, FileAccess.Write))
+        {
+            using (StreamWriter sw = new StreamWriter(fs))
+            {
+                sw.Write(editor.Text);
+            }
+        }
+
+        LastEdited = dropdownFile.value;
     }
 
     public void OnInsertClicked()
