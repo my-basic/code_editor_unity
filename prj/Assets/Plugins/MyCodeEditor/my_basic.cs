@@ -121,6 +121,7 @@ namespace lib
             SE_RN_NUMBER_EXPECTED,
             SE_RN_INTEGER_EXPECTED,
             SE_RN_ELSE_EXPECTED,
+            SE_RN_ENDIF_EXPECTED,
             SE_RN_TO_EXPECTED,
             SE_RN_NEXT_EXPECTED,
             SE_RN_UNTIL_EXPECTED,

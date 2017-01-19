@@ -175,8 +175,6 @@ namespace lib
                     if (stop)
                         return my_basic.MB_FUNC_BYE;
                 }
-
-                System.Threading.Thread.Sleep(10);
             } while (w);
 
             return my_basic.MB_FUNC_OK;

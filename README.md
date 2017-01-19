@@ -54,3 +54,5 @@ Execute the `bin/my_basic_code_editor_unity.exe` to run the editor.
 ## How to use the library
 
 Import the `pkg/my_basic_code_editor_unity.unitypackage` to your Unity3D project to use this library.
+
+Have fun :)
