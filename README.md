@@ -8,7 +8,9 @@ This is a code editor for [MY-BASIC](https://github.com/paladin-t/my_basic) powe
 
 ![](docs/run.png)
 
-It supports code manipulating, interpreter interacting, and future customization. I used the MY-BASIC DLL for Windows, and Bundle for macOS as demonstration. You can build plugin for other platforms as you wish, or use other interpreters. See the link for more information about [MY-BASIC](https://github.com/paladin-t/my_basic).
+It supports code manipulating, interpreter interacting, and future customization. I used a MY-BASIC DLL for Windows, and Bundle for macOS as demonstration. You can build plugin for other platforms as you wish, or use other interpreters. See the link for more information about [MY-BASIC](https://github.com/paladin-t/my_basic).
+
+![](docs/phone.jpg)
 
 Note this repository doesn't contain any extended libraries of MY-BASIC or other playable stuffs. It's just a small reusable code editor/shell.
 
