@@ -311,7 +311,7 @@ public class MyCodeEditor : MonoBehaviour
         scrollLineCol.Rect().offsetMin = new Vector2(scrollHeadCol.Rect().GetSize().x, scrollLineCol.Rect().offsetMin.y);
         scrollLineCol.Rect().SetSize(new Vector2(this.Rect().GetSize().x - scrollHeadCol.Rect().GetSize().x, scrollLineCol.Rect().GetSize().y));
 
-        lineTextWidth = scrollLineCol.Rect().GetSize().x - 3;
+        lineTextWidth = scrollLineCol.Rect().GetSize().x - 5;
         foreach (MyCodeLine l in lines)
         {
             if (l.TightWidth > lineTextWidth)
@@ -516,6 +516,9 @@ public class MyCodeEditor : MonoBehaviour
     public void OnScrollLineColValueChanged(Vector2 val)
     {
         scrollHeadCol.verticalScrollbar.value = val.y;
+
+        if (codeInput.Shown)
+            codeInput.Hide();
     }
 
     private void OnLineClicked(MyCodeLine ln)

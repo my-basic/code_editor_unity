@@ -40,6 +40,14 @@ public class MyCodeInput : MonoBehaviour
         }
     }
 
+    public bool Shown
+    {
+        get
+        {
+            return gameObject.activeSelf;
+        }
+    }
+
     public void Show(MyCodeLine ln)
     {
         if (Editing != null)

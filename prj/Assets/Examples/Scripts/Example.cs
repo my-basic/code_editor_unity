@@ -159,8 +159,6 @@ public class Example : MonoBehaviour
             case RunMode.Always:
                 Debug.Log(">" + ln.ToString());
 
-                editor.ScrollToLine(ln);
-
                 return true;
             case RunMode.Paused:
                 return false;
