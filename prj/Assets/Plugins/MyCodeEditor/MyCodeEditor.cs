@@ -448,7 +448,7 @@ public class MyCodeEditor : MonoBehaviour
 
     public void Clear()
     {
-        foreach(MyCodeHead hd in heads)
+        foreach (MyCodeHead hd in heads)
             GameObject.Destroy(hd.gameObject);
         heads.Clear();
 
