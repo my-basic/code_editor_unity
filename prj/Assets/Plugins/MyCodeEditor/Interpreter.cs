@@ -236,12 +236,14 @@ namespace lib
                         {
                             while (!Stepped(line))
                             {
-                                yield return wait;
+                                goto _exit;
                             }
                         }
                         waiting = false;
                     }
                 }
+
+                _exit:
 
                 yield return wait;
             }
