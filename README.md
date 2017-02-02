@@ -12,29 +12,29 @@ It supports code manipulating, interpreter interacting, and future customization
 
 ![](docs/phone.jpg)
 
-Note this repository doesn't contain any extended libraries of MY-BASIC or other playable stuffs. It's just a small reusable code editor/shell.
+Note this repository doesn't contain any extended libraries of MY-BASIC or any other playable stuffs. It's just a small reusable code editor/shell.
 
 ## Configuration
 
-You can configure keywords, reserved words, symbols, opcodes, etc. as well as in which colors to represent them.
+You may configure keywords, reserved words, symbols, opcodes, etc. as well as in which colors to represent them.
 
-The editor also allows to configure how many lines of code is expected to represent, assuming taking full height of the screen.
+The editor also allows to configure how many lines of code is expected to be represented, assuming taking full height of the screen.
 
 ![](docs/config.png)
 
-It's also able to add new function words for coloring as follow.
+It's also able to add new function words for coloring in code.
 
 ~~~~~~~~~~cs
-MyCodeEditor editor = ???
+MyCodeEditor editor = ...
 ...
-editor.AddFunction("???");
+editor.AddFunction("Your function name");
 ~~~~~~~~~~
 
 ## How to use the editor
 
 Execute the `bin/my_basic_code_editor_unity.exe` to run the editor.
 
-* Click a line to input code
+* Click a line to input or edit code
 
 ![](docs/edit.png)
 
