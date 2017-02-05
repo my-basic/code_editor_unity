@@ -4,7 +4,7 @@
 
 ## Introduction
 
-This is a code editor for [MY-BASIC](https://github.com/paladin-t/my_basic) powered by the Unity3D engine.
+This is a code editor for [MY-BASIC](https://github.com/paladin-t/my_basic) powered by the Unity3D engine. It's implemented with the standard uGUI system from Unity3D 5.x.
 
 ![](docs/run.png)
 

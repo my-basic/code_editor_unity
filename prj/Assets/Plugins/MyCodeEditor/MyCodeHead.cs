@@ -1,7 +1,7 @@
 ﻿/*
 ** This source file is part of MY-BASIC Code Editor (Unity)
 **
-** For the latest info, see https://github.com/paladin-t/my_basic_code_editor_unity/
+** For the latest info, see https://github.com/my-basic/my_basic_code_editor_unity/
 **
 ** Copyright (C) 2017 Wang Renxin
 **
