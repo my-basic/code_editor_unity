@@ -121,6 +121,10 @@ public class Example : MonoBehaviour
         interp.ErrorOccured += OnErrorOccured;
         interp.ExecutionFinished += OnExecutionFinished;
 
+        interp.RemoveReservedFunc("PRINT");
+        interp.RemoveReservedFunc("INPUT");
+        interp.Register("PRINT", discarded);
+        interp.Register("INPUT", discarded);
         Register(output);
 
         StartCoroutine(Messaging());
@@ -188,6 +192,26 @@ public class Example : MonoBehaviour
     }
 
     #region Threading
+
+    [MonoPInvokeCallback(typeof(my_basic.mb_func_t))]
+    private static int discarded(IntPtr s, ref IntPtr l)
+    {
+        my_basic.mb_value_t val;
+
+        my_basic.mb_attempt_open_bracket(s, ref l);
+
+        while (my_basic.mb_has_arg(s, ref l) != 0)
+            my_basic.mb_pop_value(s, ref l, out val);
+
+        my_basic.mb_attempt_close_bracket(s, ref l);
+
+        lock (dataLock)
+        {
+            msg = "`PRINT`, `INPUT` are discarded in this application.";
+        }
+
+        return my_basic.MB_FUNC_OK;
+    }
 
     [MonoPInvokeCallback(typeof(my_basic.mb_func_t))]
     private static int output(IntPtr s, ref IntPtr l)

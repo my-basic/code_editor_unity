@@ -193,6 +193,11 @@ namespace lib
             my_basic.mb_register_func(bas, name.ToUpper(), func);
         }
 
+        public void RemoveReservedFunc(string name)
+        {
+            my_basic.mb_remove_reserved_func(bas, name.ToUpper());
+        }
+
         private void Thread(object par)
         {
             my_basic.mb_run(bas);

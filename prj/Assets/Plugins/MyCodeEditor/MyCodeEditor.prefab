@@ -1561,8 +1561,6 @@ MonoBehaviour:
 
       asc;chr;left;mid;right;str;val;len;get;set;
 
-      print;input;
-
       list;dict;push;pop;peek;insert;sort;exist;index_of;remove;clear;clone;to_array;interator;move_next;'
     color: {r: 0, g: 0, b: 0, a: 1}
   text:
@@ -1571,6 +1569,9 @@ MonoBehaviour:
   comment:
     texts: ''';rem;'
     color: {r: 0.34117648, g: 0.6509804, b: 0.2901961, a: 1}
+  discarded:
+    texts: print;input;
+    color: {r: 1, g: 0, b: 0, a: 1}
   caseSensitive: 0
   prefabHead: {fileID: 1507316268131118}
   prefabLine: {fileID: 1253086217504054}
@@ -2205,7 +2206,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -37, y: 171.5}
+  m_AnchoredPosition: {x: -37, y: 171.49998}
   m_SizeDelta: {x: 74, y: 300}
   m_Pivot: {x: 0, y: 1}
 --- !u!224 &224269408784095602

@@ -47,6 +47,8 @@ public class MyCodeEditor : MonoBehaviour
 
     public Coloring comment = null;
 
+    public Coloring discarded = null;
+
     public bool caseSensitive = false;
 
     public GameObject prefabHead = null;
@@ -193,6 +195,26 @@ public class MyCodeEditor : MonoBehaviour
 
                     start = str.IndexOf(e, end + 1, caseSensitive);
                 }
+            }
+        }
+
+        // Discarded.
+        foreach (string e in discarded.Elements)
+        {
+            int start = str.IndexOf(e, 0, caseSensitive);
+            while (start != -1)
+            {
+                int end = start + e.Length - 1;
+
+                if (!parts.Overlap(start, end))
+                {
+                    string part = str.Substring(start, e.Length);
+                    part = string.Format("<color={1}>{0}</color>", part, discarded.ColorHexString);
+
+                    parts.Add(new Part(start, end, part));
+                }
+
+                start = str.IndexOf(e, end + 1, caseSensitive);
             }
         }
 

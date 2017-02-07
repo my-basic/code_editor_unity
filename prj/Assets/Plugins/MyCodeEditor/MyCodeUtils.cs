@@ -33,7 +33,7 @@ using UnityEngine.UI;
 public class Coloring
 {
     [Multiline]
-    public string texts;
+    public string texts = null;
 
     public Color color = Color.black;
 
