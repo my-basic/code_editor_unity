@@ -25,7 +25,7 @@
 
 using System;
 using System.Runtime.InteropServices;
-using bool_t = System.Char;
+using bool_t = System.Byte;
 using int_t = System.Int32;
 using real_t = System.Single;
 
@@ -299,7 +299,7 @@ namespace lib
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate int mb_meta_operator_t(IntPtr s, ref IntPtr l, ref mb_value_t lv, ref mb_value_t rf, ref mb_value_t ret);
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate mb_meta_status_u mb_meta_func_t(IntPtr s, ref IntPtr l, string f);
+        public delegate mb_meta_status_u mb_meta_func_t(IntPtr s, ref IntPtr l, ref mb_value_t z, string f);
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate IntPtr mb_memory_allocate_func_t(uint s);
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
