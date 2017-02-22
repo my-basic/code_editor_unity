@@ -6,11 +6,11 @@
 
 This is a code editor for [MY-BASIC](https://github.com/paladin-t/my_basic) powered by the Unity3D engine. It's implemented with the standard uGUI system from Unity3D 5.x.
 
-![](docs/run.png)
+![](img/run.png)
 
 It supports code manipulating, interpreter interacting, and future customization. I used a MY-BASIC DLL for Windows, and Bundle for macOS as demonstration. You can build plugin for other platforms as you wish, or use other interpreters. See the link for more information about [MY-BASIC](https://github.com/paladin-t/my_basic).
 
-![](docs/phone.jpg)
+![](img/phone.jpg)
 
 Note this repository doesn't contain any extended libraries of MY-BASIC or any other playable stuffs. It's just a small reusable code editor/shell.
 
@@ -20,7 +20,7 @@ You may configure keywords, reserved words, symbols, opcodes, etc. as well as in
 
 The editor also allows to configure how many lines of code is expected to be represented, assuming taking full height of the screen.
 
-![](docs/config.png)
+![](img/config.png)
 
 It's also able to add new function words for coloring in code.
 
@@ -36,22 +36,22 @@ Execute the `bin/my_basic_code_editor_unity.exe` to run the editor.
 
 * Click a line to input or edit code
 
-![](docs/edit.png)
+![](img/edit.png)
 
 * Select a file slot to save and load
 
-![](docs/file.png)
+![](img/file.png)
 
 * Select some lines, then make insertion and deletion by clicking the buttons
 
-![](docs/curd.png)
+![](img/curd.png)
 
 * Click the `RUN` button to run the code top down
 * Click the `STEP` button to run the code step by step
 * Click the `PAUSE` button to pause a top down execution
 * Click the `STOP` button to terminate an execution
 
-![](docs/exe.png)
+![](img/exe.png)
 
 ## How to use the library
 
