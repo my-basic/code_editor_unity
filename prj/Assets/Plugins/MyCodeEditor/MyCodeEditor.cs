@@ -301,7 +301,7 @@ public class MyCodeEditor : MonoBehaviour
         }
     }
 
-    private IEnumerator RelayoutProc(bool reserveScrollValue)
+    private IEnumerator RelayoutProc(bool reserveScrollValue, bool activateLast)
     {
         yield return new WaitForEndOfFrame();
 
@@ -362,13 +362,20 @@ public class MyCodeEditor : MonoBehaviour
         {
             transLineRoot.localPosition = locPos;
         }
+
+        // Activates last?
+        if (activateLast)
+            EditLine(lines.Last());
     }
 
-    public void Relayout(bool toBottom = false)
+    public void Relayout(bool toBottom = false, bool activateLast = false)
     {
         EnsureLastLineEditable();
 
-        StartCoroutine(RelayoutProc(toBottom));
+        if (codeInput.Shown)
+            codeInput.Hide();
+
+        StartCoroutine(RelayoutProc(toBottom, activateLast));
     }
 
     public int Append(string text)
@@ -526,6 +533,11 @@ public class MyCodeEditor : MonoBehaviour
         }
     }
 
+    private void EditLine(MyCodeLine ln)
+    {
+        codeInput.Show(ln);
+    }
+
     public void ScrollToLine(int index)
     {
         if (index < 0) index = 0;
@@ -538,14 +550,11 @@ public class MyCodeEditor : MonoBehaviour
     public void OnScrollLineColValueChanged(Vector2 val)
     {
         scrollHeadCol.verticalScrollbar.value = val.y;
-
-        if (codeInput.Shown)
-            codeInput.Hide();
     }
 
     private void OnLineClicked(MyCodeLine ln)
     {
-        codeInput.Show(ln);
+        EditLine(ln);
     }
 
     private void OnHeadClicked(MyCodeHead hd)
@@ -569,7 +578,7 @@ public class MyCodeEditor : MonoBehaviour
 
         if (relayout)
         {
-            Relayout(true);
+            Relayout(true, true);
         }
     }
 }

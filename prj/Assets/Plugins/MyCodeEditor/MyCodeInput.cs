@@ -58,6 +58,7 @@ public class MyCodeInput : MonoBehaviour
         FieldInput.Rect().SetSize(ln.Rect().GetSize());
         FieldInput.Rect().transform.localPosition = (ln.Rect().transform.localPosition);
         FieldInput.text = ln.Text;
+        FieldInput.ActivateInputField();
 
         ln.gameObject.SetActive(false);
 
