@@ -114,6 +114,21 @@ public class MyCodeEditor : MonoBehaviour
         get { return lines.Count; }
     }
 
+    private bool selectionEnabled = true;
+    public bool SelectionEnabled
+    {
+        get
+        {
+            return selectionEnabled;
+        }
+        set
+        {
+            selectionEnabled = value;
+            foreach (MyCodeHead h in heads)
+                h.SelectionEnabled = selectionEnabled;
+        }
+    }
+
     public IEnumerable<int> Selected
     {
         get
@@ -144,6 +159,8 @@ public class MyCodeEditor : MonoBehaviour
     }
 
     public Action<int> HeadClicked = null;
+
+    public Action<int> LineEdited = null;
 
     private void Start()
     {
@@ -489,6 +506,15 @@ public class MyCodeEditor : MonoBehaviour
         lineTextWidth = 0.0f;
     }
 
+    public void Unselect()
+    {
+        for (int i = 0; i < LineCount; ++i)
+        {
+            MyCodeHead h = heads[i];
+            h.toggleSelection.isOn = false;
+        }
+    }
+
     public bool Unselect(int index)
     {
         if (index < 0 || index >= LineCount)
@@ -517,7 +543,10 @@ public class MyCodeEditor : MonoBehaviour
         if (index >= 0 && index < LineCount)
         {
             MyCodeHead h = heads[index];
+            bool e = h.SelectionEnabled;
+            h.SelectionEnabled = true;
             h.toggleSelection.isOn = true;
+            h.SelectionEnabled = e;
         }
     }
 
@@ -528,7 +557,10 @@ public class MyCodeEditor : MonoBehaviour
             if (i >= 0 && i < LineCount)
             {
                 MyCodeHead h = heads[i];
+                bool e = h.SelectionEnabled;
+                h.SelectionEnabled = true;
                 h.toggleSelection.isOn = true;
+                h.SelectionEnabled = e;
             }
         }
     }
@@ -545,6 +577,9 @@ public class MyCodeEditor : MonoBehaviour
 
         float val = 1.0f - (float)index / LineCount;
         scrollLineCol.verticalScrollbar.value = val;
+
+        Unselect();
+        Select(index);
     }
 
     public void OnScrollLineColValueChanged(Vector2 val)
@@ -570,6 +605,9 @@ public class MyCodeEditor : MonoBehaviour
         if (codeInput.Editing != null)
         {
             codeInput.Editing.SetText(codeInput.FieldInput.text, Color(codeInput.FieldInput.text));
+
+            if (LineEdited != null)
+                LineEdited(codeInput.Editing.LineNumber);
 
             relayout = codeInput.Editing == lines.Last();
         }

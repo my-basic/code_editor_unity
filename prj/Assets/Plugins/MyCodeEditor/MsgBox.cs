@@ -75,6 +75,13 @@ public class MsgBox : MonoBehaviour
         textMsg.text = msg.ToString();
     }
 
+    public void Close()
+    {
+        stack.Clear();
+
+        gameObject.SetActive(false);
+    }
+
     public void OnOkClicked()
     {
         if (stack.Peek().callback != null)

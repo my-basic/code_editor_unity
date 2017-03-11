@@ -127,6 +127,8 @@ public class Example : MonoBehaviour
         interp.Register("INPUT", discarded);
         Register(output);
 
+        editor.LineEdited += OnLineEdited;
+
         StartCoroutine(Messaging());
 
         StartCoroutine(FillLastCode());
@@ -134,6 +136,8 @@ public class Example : MonoBehaviour
 
     private void OnDestroy()
     {
+        editor.LineEdited -= OnLineEdited;
+
         interp.Stop();
 
         while (!interp.Finished)
@@ -183,6 +187,9 @@ public class Example : MonoBehaviour
         Debug.Log("OK");
 
         mode = RunMode.Stopped;
+
+        editor.SelectionEnabled = true;
+        editor.Unselect();
     }
 
     private void Register(my_basic.mb_func_t func)
@@ -306,6 +313,8 @@ public class Example : MonoBehaviour
 
     public void OnLoadClicked()
     {
+        OnStopClicked();
+
         if (msgbox.Shown) return;
 
         if (!File.Exists(FilePath))
@@ -351,6 +360,8 @@ public class Example : MonoBehaviour
 
     public void OnInsertClicked()
     {
+        OnStopClicked();
+
         if (msgbox.Shown) return;
 
         editor.Insert(editor.Selected);
@@ -360,6 +371,8 @@ public class Example : MonoBehaviour
 
     public void OnDeleteClicked()
     {
+        OnStopClicked();
+
         if (msgbox.Shown) return;
 
         editor.Remove(editor.Selected);
@@ -379,6 +392,8 @@ public class Example : MonoBehaviour
 
             interp.Run(this, code);
         }
+
+        editor.SelectionEnabled = false;
     }
 
     public void OnStepClicked()
@@ -395,6 +410,8 @@ public class Example : MonoBehaviour
 
             interp.Run(this, code);
         }
+
+        editor.SelectionEnabled = false;
     }
 
     public void OnPauseClicked()
@@ -407,7 +424,8 @@ public class Example : MonoBehaviour
 
     public void OnStopClicked()
     {
-        if (msgbox.Shown) return;
+        if (msgbox.Shown)
+            msgbox.Close();
 
         if (mode != RunMode.Stopped)
         {
@@ -415,5 +433,12 @@ public class Example : MonoBehaviour
 
             interp.Stop();
         }
+
+        editor.SelectionEnabled = true;
+    }
+
+    private void OnLineEdited(int ln)
+    {
+        OnStopClicked();
     }
 }

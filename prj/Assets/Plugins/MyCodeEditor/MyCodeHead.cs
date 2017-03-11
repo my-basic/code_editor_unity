@@ -118,16 +118,29 @@ public class MyCodeHead : MonoBehaviour
         }
     }
 
+    private bool selfProtecting = false;
+
+    public bool SelectionEnabled { get; set; }
+
     public Action<MyCodeHead> HeadClicked = null;
+
+    private void Start()
+    {
+        SelectionEnabled = true;
+    }
 
     private void Awake()
     {
         buttonLineNumber.onClick.AddListener(OnButtonHeadClicked);
+
+        toggleSelection.onValueChanged.AddListener(OnSelectionValueChanged);
     }
 
     private void OnDestroy()
     {
         buttonLineNumber.onClick.RemoveListener(OnButtonHeadClicked);
+
+        toggleSelection.onValueChanged.RemoveListener(OnSelectionValueChanged);
     }
 
     public void Relayout()
@@ -137,6 +150,15 @@ public class MyCodeHead : MonoBehaviour
         toggleSelection.Rect().SetLeftPosition(-this.Rect().GetSize().x / 2.0f);
         buttonLineNumber.Rect().SetSize(new Vector2(this.Rect().GetSize().x - toggleSelection.Rect().GetSize().x, buttonLineNumber.Rect().GetSize().y));
         buttonLineNumber.Rect().SetLeftPosition(-this.Rect().GetSize().x / 2.0f + toggleSelection.Rect().GetSize().x);
+    }
+
+    private void OnSelectionValueChanged(bool v)
+    {
+        if (SelectionEnabled) return;
+        if (selfProtecting) return;
+        selfProtecting = true;
+        toggleSelection.isOn = false;
+        selfProtecting = false;
     }
 
     private void OnButtonHeadClicked()
