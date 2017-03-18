@@ -192,10 +192,16 @@ public class Example : MonoBehaviour
         editor.Unselect();
     }
 
-    private void Register(my_basic.mb_func_t func)
+    private bool Register(my_basic.mb_func_t func)
     {
-        interp.Register(func);
-        editor.AddFunction(func.Method.Name.ToLower());
+        if (interp.Register(func))
+        {
+            editor.AddFunction(func.Method.Name.ToLower());
+
+            return true;
+        }
+
+        return false;
     }
 
     #region Threading

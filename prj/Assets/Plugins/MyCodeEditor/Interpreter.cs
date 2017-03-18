@@ -182,15 +182,30 @@ namespace lib
 
         #endregion
 
-        public void Register(my_basic.mb_func_t func)
+        public bool Register(my_basic.mb_func_t func)
         {
+            if (!func.Method.IsStatic)
+            {
+                Debug.LogError("Static function expected.");
+
+                return false;
+            }
+
             string name = func.Method.Name;
-            my_basic.mb_register_func(bas, name.ToUpper(), func);
+
+            return my_basic.mb_register_func(bas, name.ToUpper(), func) == my_basic.MB_FUNC_OK;
         }
 
-        public void Register(string name, my_basic.mb_func_t func)
+        public bool Register(string name, my_basic.mb_func_t func)
         {
-            my_basic.mb_register_func(bas, name.ToUpper(), func);
+            if (!func.Method.IsStatic)
+            {
+                Debug.LogError("Static function expected.");
+
+                return false;
+            }
+
+            return my_basic.mb_register_func(bas, name.ToUpper(), func) == my_basic.MB_FUNC_OK;
         }
 
         public void RemoveReservedFunc(string name)
