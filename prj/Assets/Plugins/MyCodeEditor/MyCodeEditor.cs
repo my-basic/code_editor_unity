@@ -114,18 +114,20 @@ public class MyCodeEditor : MonoBehaviour
         get { return lines.Count; }
     }
 
-    private bool selectionEnabled = true;
-    public bool SelectionEnabled
+    private bool editable = true;
+    public bool Editable
     {
         get
         {
-            return selectionEnabled;
+            return editable;
         }
         set
         {
-            selectionEnabled = value;
+            editable = value;
             foreach (MyCodeHead h in heads)
-                h.SelectionEnabled = selectionEnabled;
+                h.SelectionEnabled = editable;
+            if (!editable)
+                codeInput.Hide();
         }
     }
 
@@ -609,14 +611,14 @@ public class MyCodeEditor : MonoBehaviour
             if (LineEdited != null)
                 LineEdited(codeInput.Editing.LineNumber);
 
-            relayout = codeInput.Editing == lines.Last();
+            relayout = codeInput.Editing == lines.Last() && !string.IsNullOrEmpty(codeInput.FieldInput.text);
         }
 
         codeInput.Hide();
 
         if (relayout)
         {
-            Relayout(true, true);
+            Relayout(Editable, Editable);
         }
     }
 }

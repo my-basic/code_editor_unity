@@ -123,9 +123,9 @@ public class Example : MonoBehaviour
 
         interp.RemoveReservedFunc("PRINT");
         interp.RemoveReservedFunc("INPUT");
-        interp.Register("PRINT", discarded);
-        interp.Register("INPUT", discarded);
-        Register(output);
+        interp.Register("PRINT", Discarded);
+        interp.Register("INPUT", Discarded);
+        Register(Output);
 
         editor.LineEdited += OnLineEdited;
 
@@ -188,7 +188,7 @@ public class Example : MonoBehaviour
 
         mode = RunMode.Stopped;
 
-        editor.SelectionEnabled = true;
+        editor.Editable = true;
         editor.Unselect();
     }
 
@@ -207,7 +207,7 @@ public class Example : MonoBehaviour
     #region Threading
 
     [MonoPInvokeCallback(typeof(my_basic.mb_func_t))]
-    private static int discarded(IntPtr s, ref IntPtr l)
+    private static int Discarded(IntPtr s, ref IntPtr l)
     {
         my_basic.mb_value_t val;
 
@@ -227,7 +227,7 @@ public class Example : MonoBehaviour
     }
 
     [MonoPInvokeCallback(typeof(my_basic.mb_func_t))]
-    private static int output(IntPtr s, ref IntPtr l)
+    private static int Output(IntPtr s, ref IntPtr l)
     {
         my_basic.mb_value_t val;
 
@@ -399,7 +399,7 @@ public class Example : MonoBehaviour
             interp.Run(this, code);
         }
 
-        editor.SelectionEnabled = false;
+        editor.Editable = false;
     }
 
     public void OnStepClicked()
@@ -417,7 +417,7 @@ public class Example : MonoBehaviour
             interp.Run(this, code);
         }
 
-        editor.SelectionEnabled = false;
+        editor.Editable = false;
     }
 
     public void OnPauseClicked()
@@ -440,7 +440,7 @@ public class Example : MonoBehaviour
             interp.Stop();
         }
 
-        editor.SelectionEnabled = true;
+        editor.Editable = true;
     }
 
     private void OnLineEdited(int ln)
